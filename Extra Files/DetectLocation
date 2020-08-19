@@ -1,0 +1,98 @@
+//
+//  InfoPostingViewController.swift
+//  PinSample
+//
+//  Created by Anya Traille on 22/7/20.
+//  Copyright © 2020 Udacity. All rights reserved.
+//
+
+import Foundation
+import UIKit
+import CoreLocation
+import MapKit
+
+class InfoPostingViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate
+{
+
+    var locationManager: CLLocationManager!
+
+    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var detectLocationButton: UIButton!
+    
+    @IBAction func DetectLocation()
+    {
+        determineCurrentLocation()
+    }
+    
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let mUserLocation: CLLocation = locations[0] as CLLocation
+        let center = CLLocationCoordinate2D(latitude: mUserLocation.coordinate.latitude, longitude: mUserLocation.coordinate.longitude)
+        let mRegion = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+        //self.locationTextField =
+        mapView.setRegion(mRegion, animated: true)
+        
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Error - location manager: \(error.localizedDescription)")
+    }
+    
+    func determineCurrentLocation()
+    {
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestAlwaysAuthorization()
+        
+        if CLLocationManager.locationServicesEnabled()
+        {
+            locationManager.startUpdatingLocation()
+        }
+    }
+
+}
+
+
+
+func handleImageFileResponse(image: UIImage?, error: Error?)
+{
+    print("Inside of handleImageFileResponse(image: UIImage?, error: Error?)")
+    
+    if error == nil
+    {
+        print("appending image to array")
+        self.imageArray.append(image!)
+        DispatchQueue.main.async {
+            
+            //print("inside main thread, reloading data")
+            //self.collectionView.reloadData()
+            
+        }
+    } else
+    {
+        print("in handleImageFileResponse there was an error")
+    }
+    
+}
+
+
+
+VirtualTouristClient.downloadImageFile(url: test2, completionHandler: self.handleImageFileResponse(image:error:))
+
+
+
+private var howManyItems = 20     // You know the number at start ; it may an array.count.
+
+func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    return howManyItems
+}
+
+ // When you delete item
+  howManyItems -= 1
+  items.remove(at: 0)
+  cv.deleteItems(at: [IndexPath(row: 0, section: 0)])
+  cv.reloadData()
+  
+  
+  "&page=\(Int.random(in: 0..<30))"
